@@ -30,7 +30,20 @@ PowerTrack is a web-based Smart City Energy Monitoring Dashboard developed using
 
 ## Dashboard Preview
 
-![Dashboard](screenshots/dashboard.png)
+### Overall Consumption
+![Overall Consumption](screenshots/Overall%20Consumption.png)
+
+### Residential Zone
+![Residential Zone](screenshots/Residential%20Zone.png)
+
+### Commercial Zone
+![Commercial Zone](screenshots/Commercial%20Zone.png)
+
+### Industrial Zone
+![Industrial Zone](screenshots/Industrial%20Zone.png)
+
+### Public Zone
+![Public Zone](screenshots/Public%20Zone.png)
 
 ## Author
 Varshini Kotagiri
