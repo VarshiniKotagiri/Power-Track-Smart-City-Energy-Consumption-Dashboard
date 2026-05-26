@@ -28,5 +28,9 @@ PowerTrack is a web-based Smart City Energy Monitoring Dashboard developed using
 - AI-based energy prediction
 - Cloud database connectivity
 
+## Dashboard Preview
+
+![Dashboard](screenshots/dashboard.png)
+
 ## Author
 Varshini Kotagiri
