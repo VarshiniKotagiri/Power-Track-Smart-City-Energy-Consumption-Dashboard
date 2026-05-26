@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Energy Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg-primary: #0a0e1a;
+    --bg-card: #0d1526;
+    --bg-card2: #111c30;
+    --cyan: #00f0ff;
+    --cyan-dim: #00b8c8;
+    --cyan-glow: rgba(0,240,255,0.15);
+    --cyan-border: rgba(0,240,255,0.3);
+    --orange: #ff8c00;
+    --text-bright: #e0f7ff;
+    --text-muted: #7ab8cc;
+    --green: #00ff88;
+    --yellow: #ffe066;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-primary);
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--text-bright);
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 200px;
+    min-width: 200px;
+    background: var(--bg-card);
+    border-right: 1px solid var(--cyan-border);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    gap: 28px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-icon {
+    font-size: 28px;
+    color: var(--orange);
+    filter: drop-shadow(0 0 8px var(--orange));
+  }
+
+  .nav-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-btn {
+    background: transparent;
+    border: 1px solid var(--cyan-border);
+    color: var(--cyan);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+
+  .nav-btn:hover, .nav-btn.active {
+    background: var(--cyan-glow);
+    border-color: var(--cyan);
+    box-shadow: 0 0 12px var(--cyan-glow);
+  }
+
+  .zone-section label {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 10px;
+    font-family: 'Orbitron', monospace;
+  }
+
+  .zone-select {
+    width: 100%;
+    background: var(--bg-card2);
+    border: 1px solid var(--cyan-border);
+    color: var(--text-bright);
+    padding: 7px 10px;
+    border-radius: 6px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+  }
+
+  /* ── KPI CARDS ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+  }
+
+  .kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--cyan-border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+  }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  }
+
+  .kpi-card:hover {
+    box-shadow: 0 0 20px var(--cyan-glow);
+  }
+
+  .kpi-label {
+    font-size: 13px;
+    color: var(--cyan);
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .kpi-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--cyan);
+    text-shadow: 0 0 16px var(--cyan);
+    letter-spacing: 1px;
+  }
+
+  /* ── CHARTS GRID ── */
+  .charts-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+
+  .charts-row2 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+
+  .chart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--cyan-border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    position: relative;
+  }
+
+  .chart-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  }
+
+  .chart-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+  }
+
+  /* Pie chart specific — force circle */
+  .pie-wrap {
+    width: 260px;
+    height: 260px;
+    margin: 0 auto;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 20px;
+    margin-top: 12px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <span class="logo-icon">⚡</span>
+  </div>
+  <div class="nav-buttons">
+    <button class="nav-btn active">Dashboard</button>
+    <button class="nav-btn">Analytics</button>
+  </div>
+  <div class="zone-section">
+    <label>Zone</label>
+    <select class="zone-select" id="zoneSelect" onchange="updateZone()">
+      <option value="overall">Overall</option>
+      <option value="residential">Residential</option>
+      <option value="commercial">Commercial</option>
+      <option value="industrial">Industrial</option>
+      <option value="public">Public</option>
+    </select>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Energy</div>
+      <div class="kpi-value">3176 <span style="font-size:14px;color:var(--text-muted)">kWh</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Current Load</div>
+      <div class="kpi-value">110 <span style="font-size:14px;color:var(--text-muted)">kW</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Peak Load</div>
+      <div class="kpi-value">186 <span style="font-size:14px;color:var(--text-muted)">kW</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Load Factor</div>
+      <div class="kpi-value">170.8<span style="font-size:18px">%</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Peak Time</div>
+      <div class="kpi-value">7 <span style="font-size:18px">PM</span></div>
+    </div>
+  </div>
+
+  <!-- Row 1: Load Curve + Zone Comparison -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">Load Curve</div>
+      <div class="chart-wrap" style="height:220px">
+        <canvas id="loadCurveChart"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Load (kW)</div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Zone Comparison</div>
+      <div class="chart-wrap" style="height:220px">
+        <canvas id="zoneCompChart"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Peak Load (kW)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Energy Distribution (Pie) + Weekly Trend -->
+  <div class="charts-row2">
+    <div class="chart-card">
+      <div class="chart-title">Energy Distribution</div>
+      <div class="pie-wrap">
+        <canvas id="pieChart"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#00f0ff"></div>Residential</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#00b8a0"></div>Commercial</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#007a8a"></div>Industrial</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#004d66"></div>Public</div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Weekly Energy Trend</div>
+      <div class="chart-wrap" style="height:260px">
+        <canvas id="weeklyChart"></canvas>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Total Energy (kWh)</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
